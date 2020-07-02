@@ -12,20 +12,57 @@
 
 <body>
 <div style="text-align: center;">
-    <h2>信1701-3班操作系统小学期七月二日报告上传</h2>
-</div>
-
-<div style="text-align: center;">
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-        文件上传
-    </button>
-
-     <button class="btn btn-danger btn-lg" data-toggle="modal" onclick="window.location.href='/info'">
-        上传情况
-    </button>
+    <h2>信1701-3班操作系统小学期七月三日报告上传</h2>
+    <p><strong style="color:green;">已交{{ num1 }}人</strong>/<strong style="color:red;">未交{{ num2 }}人</strong></p>
 </div>
 
 
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>提交状态</th>
+        <th>学号</th>
+        <th>姓名</th>
+        <th>上传时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in data %}
+        <tr>
+
+            {% if i['status'] == 'yes' %}
+                <td style="color: green"><strong>已提交</strong></td>
+            {% else %}
+                <td style="color: red"><strong>未提交</strong></td>
+            {% endif %}
+            <td>{{ i['num'] }}</td>
+            <td>{{ i['name'] }}</td>
+            <td>{{ i['time'] }}</td>
+
+            {% if i['status'] == 'yes' %}
+                <td>
+                    <button class="btn btn-primary" disabled="disabled">
+                        已上传
+                    </button>
+                </td>
+            {% else %}
+                <td>
+                    <button class="btn btn-primary btn-lg" data-toggle="modal" onclick="display_form({{ i }})">
+                        文件上传
+                    </button>
+                </td>
+            {% endif %}
+
+
+        </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+
+<!--弹出框-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -41,7 +78,7 @@
                             <span class="input-group-text">姓名</span>
                         </div>
                         <label for="name"></label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="请输入姓名">
+                        <input type="text" class="form-control" id="name" name="name">
                     </div>
 
                     <div class="input-group mb-3">
@@ -49,25 +86,24 @@
                             <span class="input-group-text">学号</span>
                         </div>
                         <label for="num"></label>
-                        <input type="text" class="form-control" id="num" name="num" placeholder="请输入学号">
+                        <input type="text" class="form-control" id="num" name="num">
                     </div>
 
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">班级</span>
                         </div>
-
-                        <select class="form-control" name="classes">
+                        <select class="form-control" name="classes" disabled>
                             <option value="1701_1">信1701-1班</option>
                             <option value="1701_2">信1701-2班</option>
-                            <option value="1701_3">信1701-3班</option>
+                            <option value="1701_3" selected>信1701-3班</option>
                         </select>
 
                     </div>
 
                     <input id='file' class="btn btn-info" name="file" type="file">
                     <div class="modal-footer">
-                        <button type="button" onclick="submitXML()" class="btn btn-primary">提交</button>
+                        <button type="button" onclick="submitForm()" class="btn btn-primary">提交</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
                     </div>
                 </form>
@@ -78,7 +114,15 @@
 </body>
 
 <script>
-    function submitXML() {
+    function display_form(data) {
+        $('#myModal').modal('show')
+        $('#name').val(data['name'])
+        $('#num').val(data['num'])
+
+    }
+
+
+    function submitForm() {
         var name = $('#name').val()
         var num = $('#num').val()
         //用户名为2-5个汉字
@@ -102,6 +146,11 @@
         }
         //提交
         $('#upload').submit();
+    }
+
+    function set_value(num, name) {
+        $('#name').val(name)
+        $('#num').val(num)
     }
 </script>
 </html>
