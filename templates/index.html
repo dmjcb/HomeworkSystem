@@ -13,10 +13,14 @@
 <body>
 <div style="text-align: center;">
     <h2>信1701-3班操作系统小学期七月三日报告上传</h2>
-    <p><strong style="color:green;">已交{{ num1 }}人</strong>/<strong style="color:red;">未交{{ num2 }}人</strong></p>
+    <p>
+        <strong style="color:green;">已交{{ num1 }}人</strong>
+        /
+        <strong style="color:red;">未交{{ 37-num1 }}人</strong>
+    </p>
 </div>
 
-
+<!--提交信息的表格-->
 <table class="table table-hover">
     <thead>
     <tr>
@@ -30,40 +34,42 @@
     <tbody>
     {% for i in data %}
         <tr>
-
             {% if i['status'] == 'yes' %}
-                <td style="color: green"><strong>已提交</strong></td>
+                <td style="color: green">
+                    <strong>已提交</strong>
+                </td>
             {% else %}
-                <td style="color: red"><strong>未提交</strong></td>
+                <td style="color: red">
+                    <strong>未提交</strong>
+                </td>
             {% endif %}
             <td>{{ i['num'] }}</td>
             <td>{{ i['name'] }}</td>
             <td>{{ i['time'] }}</td>
-
+            <!--已经提交则提交按钮为不可操作状态-->
             {% if i['status'] == 'yes' %}
                 <td>
                     <button class="btn btn-primary" disabled="disabled">
                         已上传
                     </button>
                 </td>
+
             {% else %}
+                <!--否则当点击上传按钮时将字典i的值传给对应函数-->
                 <td>
                     <button class="btn btn-primary btn-lg" data-toggle="modal" onclick="display_form({{ i }})">
                         文件上传
                     </button>
                 </td>
             {% endif %}
-
-
         </tr>
     {% endfor %}
-
     </tbody>
 </table>
 
 
-<!--弹出框-->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!--上传文件弹出框-->
+<div class="modal fade" id="stu_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -72,6 +78,7 @@
                 </h4>
             </div>
             <div class="modal-body">
+                <!--上传信息表格-->
                 <form id="upload" action="/upload" enctype='multipart/form-data' method='POST'>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
@@ -96,14 +103,15 @@
                         <select class="form-control" name="classes" disabled>
                             <option value="1701_1">信1701-1班</option>
                             <option value="1701_2">信1701-2班</option>
+                            <!--默认值-->
                             <option value="1701_3" selected>信1701-3班</option>
                         </select>
 
                     </div>
-
+                    <!--上传文件的控件-->
                     <input id='file' class="btn btn-info" name="file" type="file">
                     <div class="modal-footer">
-                        <button type="button" onclick="submitForm()" class="btn btn-primary">提交</button>
+                        <button type="button" onclick="submit_form()" class="btn btn-primary">提交</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
                     </div>
                 </form>
@@ -114,20 +122,22 @@
 </body>
 
 <script>
+    //显示模态框
     function display_form(data) {
-        $('#myModal').modal('show')
+        //模态框显示事件
+        $('#stu_modal').modal('show')
+        //自动给姓名与学号控件赋值
         $('#name').val(data['name'])
         $('#num').val(data['num'])
-
     }
 
-
-    function submitForm() {
+    //提交表格
+    function submit_form() {
         var name = $('#name').val()
         var num = $('#num').val()
         //用户名为2-5个汉字
         var name_reg = /^[\u4e00-\u9fa5]{2,5}$/
-
+        //学号为8位数字
         var num_reg = /^\d{8}$/
         if (!name_reg.test(name)) {
             alert("用户名错误!")
@@ -139,18 +149,11 @@
         }
         //判断文件是否为空
         var fileInput = $('#file').get(0).files[0];
-        console.info(fileInput);
         if (!fileInput) {
             alert("请选择上传文件！")
             return
         }
-        //提交
         $('#upload').submit();
-    }
-
-    function set_value(num, name) {
-        $('#name').val(name)
-        $('#num').val(num)
     }
 </script>
 </html>
