@@ -8,6 +8,8 @@
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://www.huangwx.cn/css/sweetalert.css">
+    <script type="text/javascript" src="https://www.huangwx.cn/js/sweetalert-dev.js"></script>
 </head>
 
 <body>
@@ -142,20 +144,21 @@
         //学号为8位数字
         var num_reg = /^\d{8}$/
         if (!name_reg.test(name)) {
-            alert("用户名错误!")
+            swal("用户名错误!")
             return
         }
         if (!num_reg.test(num)) {
-            alert("学号错误!")
+            swal("学号错误!")
             return
         }
         //判断文件是否为空
         var fileInput = $('#file').get(0).files[0];
         if (!fileInput) {
-            alert("请选择上传文件！")
+            swal("请选择上传文件！")
             return
         }
-        $('#upload').submit();
+        $('#upload').submit()
+        swal('上传成功')
     }
 </script>
 </html>
