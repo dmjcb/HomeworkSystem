@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 
 import time
@@ -42,7 +43,8 @@ def upload_file():
         # 将路径转换为绝对路径
         upload_path = os.path.abspath(upload_path)
         f.save(upload_path)
-        return redirect(url_for('hello_world'))
+        print(upload_path)
+        return json.dumps({"result": 1})
 
 
 def zip_file():

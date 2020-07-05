@@ -137,28 +137,54 @@
 
     //提交表格
     function submit_form() {
-        var name = $('#name').val()
-        var num = $('#num').val()
+        var form = document.getElementById("upload");
+        var formData = new FormData(form);
+        var name = formData.get("name")
+        var num = formData.get("num")
         //用户名为2-5个汉字
         var name_reg = /^[\u4e00-\u9fa5]{2,5}$/
         //学号为8位数字
         var num_reg = /^\d{8}$/
         if (!name_reg.test(name)) {
-            swal("用户名错误!")
+            swal("用户名错误!", "", "warning")
             return
         }
         if (!num_reg.test(num)) {
-            swal("学号错误!")
+            swal("学号错误!", "", "warning")
             return
         }
         //判断文件是否为空
+        //var file = formData.get("file")
         var fileInput = $('#file').get(0).files[0];
         if (!fileInput) {
-            swal("请选择上传文件！")
+            swal("请选择上传文件！", "", "warning")
             return
         }
-        $('#upload').submit()
-        swal('上传成功')
+        $.ajax({
+            async: false,
+            type: "POST",
+            url: "/upload",
+            data: formData,
+            dataType: "JSON",
+            mimeType: "multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function () {
+                swal({
+                    title: "上传成功",
+                    text: "",
+                    type: "success",
+                    timer: 2000
+                }, function () {
+                    location.reload()
+                })
+            },
+            error: function () {
+                alert("网络异常，请稍后重试")
+            }
+        })
+
     }
 </script>
 </html>
