@@ -10,13 +10,23 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://www.huangwx.cn/css/sweetalert.css">
     <script type="text/javascript" src="https://www.huangwx.cn/js/sweetalert-dev.js"></script>
+    <style>
+        .safe {
+            color: green;
+            font-weight: bold;
+        }
+        .danger {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
 
 <a href="https://blog.csdn.net/qq_41452937/article/details/107104058">构建过程</a>
 <div style="text-align: center;">
-    <h2>信1701-3班操作系统小学期七月五日报告上传</h2>
+    <h2>信1701-3班操作系统小学期七月六日报告上传</h2>
     <p>
         <strong style="color:green;">已交{{ num1 }}人</strong>
         /
@@ -39,33 +49,25 @@
     {% for i in data %}
         <tr>
             {% if i['status'] == 'yes' %}
-                <td style="color: green">
-                    <strong>已提交</strong>
-                </td>
+                <td class="safe">已提交</td>
             {% else %}
-                <td style="color: red">
-                    <strong>未提交</strong>
-                </td>
+                <td class="danger">未提交</td>
             {% endif %}
             <td>{{ i['num'] }}</td>
             <td>{{ i['name'] }}</td>
             <td>{{ i['time'] }}</td>
-            <!--已经提交则提交按钮为不可操作状态-->
-            {% if i['status'] == 'yes' %}
-                <td>
-                    <button class="btn btn-primary" disabled="disabled">
-                        已上传
+            <td>
+                {% if i['status'] == 'yes' %}
+                    <button class="btn btn-success" onclick="displayForm({{ i }})">
+                        重新上传
                     </button>
-                </td>
-
-            {% else %}
-                <!--否则当点击上传按钮时将字典i的值传给对应函数-->
-                <td>
-                    <button class="btn btn-primary" data-toggle="modal" onclick="display_form({{ i }})">
+                {% else %}
+                    <button class="btn btn-primary" onclick="displayForm({{ i }})">
                         文件上传
                     </button>
-                </td>
-            {% endif %}
+                {% endif %}
+            </td>
+
         </tr>
     {% endfor %}
     </tbody>
@@ -73,17 +75,17 @@
 
 
 <!--上传文件弹出框-->
-<div class="modal fade" id="stu_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="myModalLabel">
-                    操作系统每日报告上传
+                    作业上传
                 </h4>
             </div>
             <div class="modal-body">
                 <!--上传信息表格-->
-                <form id="upload" action="/upload" enctype='multipart/form-data' method='POST'>
+                <form id="uploadForm" enctype='multipart/form-data' method='POST'>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">姓名</span>
@@ -104,18 +106,17 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">班级</span>
                         </div>
-                        <select class="form-control" name="classes" disabled>
-                            <option value="1701_1">信1701-1班</option>
-                            <option value="1701_2">信1701-2班</option>
-                            <!--默认值-->
-                            <option value="1701_3" selected>信1701-3班</option>
+                        <select class="form-control" name="classes">
+                            <option value="信1701_1">信1701-1班</option>
+                            <option value="信1701_2">信1701-2班</option>
+                            <option value="信1701_3">信1701-3班</option>
                         </select>
 
                     </div>
                     <!--上传文件的控件-->
                     <input id='file' class="btn btn-info" name="file" type="file">
                     <div class="modal-footer">
-                        <button type="button" onclick="submit_form()" class="btn btn-primary">提交</button>
+                        <button type="button" onclick="submitForm()" class="btn btn-primary">提交</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
                     </div>
                 </form>
@@ -127,35 +128,28 @@
 
 <script>
     //显示模态框
-    function display_form(data) {
+    function displayForm(data) {
         //模态框显示事件
-        $('#stu_modal').modal('show')
+        $('#infoModal').modal('show')
         //自动给姓名与学号控件赋值
         $('#name').val(data['name'])
         $('#num').val(data['num'])
     }
 
     //提交表格
-    function submit_form() {
-        var form = document.getElementById("upload");
-        var formData = new FormData(form);
+    function submitForm() {
+        var formData = new FormData($('#uploadForm')[0]);
         var name = formData.get("name")
         var num = formData.get("num")
-        //用户名为2-5个汉字
-        var name_reg = /^[\u4e00-\u9fa5]{2,5}$/
-        //学号为8位数字
-        var num_reg = /^\d{8}$/
-        if (!name_reg.test(name)) {
-            swal("用户名错误!", "", "warning")
+        if (!/^[\u4e00-\u9fa5]{2,5}$/.test(name)) {
+            swal("用户名错误!", "用户名为2-5个汉字", "error")
             return
         }
-        if (!num_reg.test(num)) {
-            swal("学号错误!", "", "warning")
+        if (!/^\d{8}$/.test(num)) {
+            swal("学号错误!", "学号为8位数字", "error")
             return
         }
-        //判断文件是否为空
-        //var file = formData.get("file")
-        var fileInput = $('#file').get(0).files[0];
+        var fileInput = $('#file')[0].files[0];
         if (!fileInput) {
             swal("请选择上传文件！", "", "warning")
             return
@@ -184,7 +178,6 @@
                 alert("网络异常，请稍后重试")
             }
         })
-
     }
 </script>
 </html>

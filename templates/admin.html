@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .safe {
+            color: green;
+            font-weight: bold;
+        }
+
+        .danger {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<!--提交信息的表格-->
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>状态</th>
+        <th>编号</th>
+        <th>名称</th>
+        <th>班级</th>
+        <th>截至时间</th>
+        <th>收缴情况</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in work_info %}
+        <tr>
+            {% if i.status == 'yes' %}
+                <td class="safe">已完成</td>
+            {% else %}
+                <td class="danger">未提交</td>
+            {% endif %}
+            <td>{{ i.id }}</td>
+            <td>{{ i.name }}</td>
+            <td>{{ i.classes }}</td>
+            <td>{{ i.time }}</td>
+            <td>{{ i.amount }}</td>
+            <td>
+                {% if i.status == 'yes' %}
+                    <button class="btn btn-success" onclick="">
+                        查看
+                    </button>
+                    <button class="btn btn-danger" onclick="">
+                        删除
+                    </button>
+                {% else %}
+                    <button class="btn btn-primary" onclick="">
+                        下载
+                    </button>
+                {% endif %}
+            </td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<button class="btn btn-primary btn-lg" data-toggle="modal" onclick="">
+    发布作业
+</button>
+
+<!--发布作业弹出框-->
+<div class="modal fade" id="publishModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">
+                    发布作业
+                </h4>
+            </div>
+            <div class="modal-body">
+                <!--上传信息表格-->
+                <form id="publishForm" action="" enctype='multipart/form-data' method='POST'>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">作业名称</span>
+                        </div>
+                        <label for="name"></label>
+                        <input type="text" class="form-control" id="name" name="name">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">应收数</span>
+                        </div>
+                        <label for="amount"></label>
+                        <input type="text" class="form-control" id="amount" name="amount">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">截至日期</span>
+                        </div>
+                        <label for="deadline"></label>
+                        <input type="text" class="form-control" id="deadline" name="deadline">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">选择附加文件</span>
+                        </div>
+                        <label for="file"></label>
+                        <!--上传文件的控件-->
+                        <input id='file' class="btn btn-info" name="file" type="file">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="">提交</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

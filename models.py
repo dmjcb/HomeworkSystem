@@ -1,39 +1,46 @@
-stu_info = [
-    {'num': '20153442', 'name': '李孟凯'},
-    {'num': '20163468', 'name': '张振威'},
-    {'num': '20173420', 'name': '张焕德'},
-    {'num': '20173430', 'name': '王浩然'},
-    {'num': '20173434', 'name': '张帅'},
-    {'num': '20173439', 'name': '周成博'},
-    {'num': '20173449', 'name': '都博睿'},
-    {'num': '20173462', 'name': '王子函'},
-    {'num': '20173471', 'name': '刘光磊'},
-    {'num': '20173479', 'name': '赵东健'},
-    {'num': '20173482', 'name': '封柔昕'},
-    {'num': '20173489', 'name': '李兴洲'},
-    {'num': '20173496', 'name': '王仁月'},
-    {'num': '20173501', 'name': '高洋'},
-    {'num': '20173512', 'name': '郭振璇'},
-    {'num': '20173525', 'name': '安寅生'},
-    {'num': '20173532', 'name': '王亚杰'},
-    {'num': '20173535', 'name': '赵月超'},
-    {'num': '20173540', 'name': '韩春雨'},
-    {'num': '20173545', 'name': '郝铭杨'},
-    {'num': '20173554', 'name': '薄阳瑜'},
-    {'num': '20173578', 'name': '刘勤清'},
-    {'num': '20173589', 'name': '王晓英'},
-    {'num': '20173605', 'name': '郑雪鹏'},
-    {'num': '20173616', 'name': '于世超'},
-    {'num': '20173631', 'name': '牛少康'},
-    {'num': '20173637', 'name': '李泰格'},
-    {'num': '20173641', 'name': '陈恒哲'},
-    {'num': '20173650', 'name': '赵浩然'},
-    {'num': '20173653', 'name': '李元昊'},
-    {'num': '20173656', 'name': '许丽娇'},
-    {'num': '20173663', 'name': '崔世杰'},
-    {'num': '20173669', 'name': '武伟康'},
-    {'num': '20173678', 'name': '历浩'},
-    {'num': '20173689', 'name': '莫雨昊'},
-    {'num': '20173695', 'name': '姚燕'},
-    {'num': '20173942', 'name': '刘宇琦'}
-]
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+
+
+class Stu(Base):
+    __tablename__ = 'Stu'
+    id = Column(String(32), primary_key=True)
+    name = Column(String(32))
+    classes = Column(String(32))
+
+
+class Work(Base):
+    __tablename__ = 'Work'
+    id = Column(String(32), primary_key=True)
+    name = Column(String(32), primary_key=True)
+    classes = Column(String(32))
+    amount = Column(Integer)
+    time = Column(DateTime)
+    status = Column(String(32))
+
+
+class Record(Base):
+    __tablename__ = 'Record'
+    id = Column(String(32), primary_key=True)
+    work_id = Column(String(32))
+    stu_id = Column(String(32))
+    time = Column(DateTime)
+
+
+sqlite_url = 'sqlite:///Info.db?check_same_thread=False'
+
+# 创建引擎
+engine = create_engine(sqlite_url)
+
+# 创建表
+Base.metadata.create_all(engine)
+
+# 创建DBSession类型:
+Session = sessionmaker(bind=engine)
+
+# 创建Session类实例
+session = Session()
